@@ -1,4 +1,6 @@
 datasets
+debugpy
+path
 torch
 transformers
 tiktoken
