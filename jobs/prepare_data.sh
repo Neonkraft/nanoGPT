@@ -7,6 +7,19 @@
 #SBATCH -e logs/%j.%x.%N.err # STDERR  (the folder log has to be created prior to running or this won't work)
 #SBATCH -J PrepareData # sets the job name. If not specified, the file name will be used as job name
 
+# Read environment variables from config.conf
+SCRIPT_DIR="./vscode_remote_debugging"
+while read var value
+do
+    export "$var"="$value"
+done < $SCRIPT_DIR/config.conf
+
+cd $WORKDIR
+
+# Activate conda environment
+source $CONDA_SOURCE
+conda activate $CONDA_ENV
+
 if [[ $# -eq 0 ]]; then
     echo "No flag provided, preparing shakespeare data (GPT2 tokenization)"
     python data/shakespeare/prepare.py
