@@ -277,16 +277,17 @@ while True:
                 print(f"saving checkpoint to {out_dir}")
                 # torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
 
-        try:
-            # Generate a few sentences
-            model.eval()
-            start_tokens = torch.tensor(enc.encode_ordinary("Friends, Romans, countrymen"), device=device).view(1, -1)
-            sampled_tokens = model.generate(start_tokens, 64, temperature=1, top_k=None)
-            print('Generated tokens')
-            print(sampled_tokens)
-            print(enc.decode(sampled_tokens.squeeze().tolist()))
-        except Exception as e:
-            print(e)
+        # try:
+        #     # Generate a few sentences
+        #     model.eval()
+        #     start_tokens = torch.tensor(enc.encode_ordinary("Friends, Romans, countrymen"), device=device).view(1, -1)
+        #     sampled_tokens = model.generate(start_tokens, 64, temperature=1, top_k=None)
+        #     print('Generated tokens')
+        #     print(sampled_tokens)
+        #     print(enc.decode(sampled_tokens.squeeze().tolist()))
+        # except Exception as e:
+        #     print('Error while generating tokens (or decoding them)')
+        #     print(e)
 
         model.train()
 
