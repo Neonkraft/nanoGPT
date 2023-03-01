@@ -20,6 +20,7 @@ import os
 import time
 import math
 import pickle
+import tiktoken
 from contextlib import nullcontext
 
 import numpy as np
@@ -241,6 +242,8 @@ t0 = time.time()
 local_iter_num = 0 # number of iterations in the lifetime of this process
 raw_model = model.module if ddp else model # unwrap DDP container if needed
 running_mfu = -1.0
+enc = tiktoken.get_encoding("gpt2")
+
 while True:
 
     # determine and set the learning rate for this iteration
@@ -272,7 +275,21 @@ while True:
                     'config': config,
                 }
                 print(f"saving checkpoint to {out_dir}")
-                torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
+                # torch.save(checkpoint, os.path.join(out_dir, 'ckpt.pt'))
+
+        try:
+            # Generate a few sentences
+            model.eval()
+            start_tokens = torch.tensor(enc.encode_ordinary("Friends, Romans, countrymen"), device=device).view(1, -1)
+            sampled_tokens = model.generate(start_tokens, 64, temperature=1, top_k=None)
+            print('Generated tokens')
+            print(sampled_tokens)
+            print(enc.decode(sampled_tokens.squeeze().tolist()))
+        except Exception as e:
+            print(e)
+
+        model.train()
+
     if iter_num == 0 and eval_only:
         break
 
